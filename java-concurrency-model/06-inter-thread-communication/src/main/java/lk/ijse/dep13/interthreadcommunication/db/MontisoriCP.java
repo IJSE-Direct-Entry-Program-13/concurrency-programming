@@ -50,28 +50,33 @@ public class MontisoriCP {
         }
     }
 
-    public ConnectionWrapper getConnection() {
-        if (!MAIN_POOL.isEmpty()) {
-            Integer key = MAIN_POOL.keySet().stream().findFirst().get();
-            Connection connection = MAIN_POOL.get(key);
-            MAIN_POOL.remove(key);
-            CONSUMER_POOL.put(key, connection);
-            return new ConnectionWrapper(key, connection);
-        } else {
-            throw new RuntimeException("No Connections Available");
+    public synchronized ConnectionWrapper getConnection() {
+        while (MAIN_POOL.isEmpty()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
+        Integer key = MAIN_POOL.keySet().stream().findFirst().get();
+        Connection connection = MAIN_POOL.get(key);
+        MAIN_POOL.remove(key);
+        CONSUMER_POOL.put(key, connection);
+        return new ConnectionWrapper(key, connection);
     }
 
-    public void releaseConnection(Integer id){
+    public synchronized void releaseConnection(Integer id){
         if (!CONSUMER_POOL.containsKey(id)) throw new RuntimeException("Invalid Connection ID");
         Connection connection = CONSUMER_POOL.get(id);
         CONSUMER_POOL.remove(id);
         MAIN_POOL.put(id, connection);
+        notify();
     }
 
-    public void releaseAllConnections(){
+    public synchronized void releaseAllConnections(){
         CONSUMER_POOL.forEach(MAIN_POOL::put);
         CONSUMER_POOL.clear();
+        notifyAll();
     }
 
     public record ConnectionWrapper(Integer id, Connection connection) {
