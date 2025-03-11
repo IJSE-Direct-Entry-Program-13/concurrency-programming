@@ -19,7 +19,7 @@ public class Demo {
         Thread.sleep(1);
         new Thread(() -> {
             try {
-                method1();
+                method2();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
