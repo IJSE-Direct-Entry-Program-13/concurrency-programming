@@ -22,7 +22,7 @@ public class MontisoriCP {
         this.poolSize = poolSize;
         try {
             initializePool();
-        } catch (IOException | SQLException e) {
+        } catch (IOException | SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -31,7 +31,7 @@ public class MontisoriCP {
         return poolSize;
     }
 
-    private void initializePool() throws IOException, SQLException {
+    private void initializePool() throws IOException, SQLException, ClassNotFoundException {
         Properties properties = new Properties();
         properties.load(getClass().getResourceAsStream("/application.properties"));
 
@@ -40,6 +40,8 @@ public class MontisoriCP {
         String database = properties.getProperty("app.db.database");
         String user = properties.getProperty("app.db.user");
         String password = properties.getProperty("app.db.password");
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
 
         for (int i = 0; i < poolSize; i++) {
             Connection connection = DriverManager.getConnection("jdbc:mysql://%s:%s/%s"
