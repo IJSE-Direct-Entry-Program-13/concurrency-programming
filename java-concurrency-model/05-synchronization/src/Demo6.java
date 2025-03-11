@@ -10,6 +10,13 @@ public class Demo6 {
         }, "t1").start();
         new Thread(() -> {
             try {
+                method1();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, "t1clone").start();
+        new Thread(() -> {
+            try {
                 c1.sayHello();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
