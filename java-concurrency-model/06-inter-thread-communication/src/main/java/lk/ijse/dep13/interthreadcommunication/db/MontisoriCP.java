@@ -12,7 +12,7 @@ public class MontisoriCP {
 
     private final HashMap<Integer, Connection> MAIN_POOL = new HashMap<>();
     private final HashMap<Integer, Connection> CONSUMER_POOL = new HashMap<>();
-    private int poolSize;
+    private final int poolSize;
 
     public MontisoriCP() {
         this(DEFAULT_POOL_SIZE);
@@ -22,9 +22,13 @@ public class MontisoriCP {
         this.poolSize = poolSize;
         try {
             initializePool();
-        } catch (IOException|SQLException e) {
+        } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getPoolSize() {
+        return poolSize;
     }
 
     private void initializePool() throws IOException, SQLException {
@@ -42,5 +46,32 @@ public class MontisoriCP {
                     .formatted(host, port, database), user, password);
             MAIN_POOL.put((i + 1) * 10, connection);
         }
+    }
+
+    public ConnectionWrapper getConnection() {
+        if (!MAIN_POOL.isEmpty()) {
+            Integer key = MAIN_POOL.keySet().stream().findFirst().get();
+            Connection connection = MAIN_POOL.get(key);
+            MAIN_POOL.remove(key);
+            CONSUMER_POOL.put(key, connection);
+            return new ConnectionWrapper(key, connection);
+        } else {
+            throw new RuntimeException("No Connections Available");
+        }
+    }
+
+    public void releaseConnection(Integer id){
+        if (!CONSUMER_POOL.containsKey(id)) throw new RuntimeException("Invalid Connection ID");
+        Connection connection = CONSUMER_POOL.get(id);
+        CONSUMER_POOL.remove(id);
+        MAIN_POOL.put(id, connection);
+    }
+
+    public void releaseAllConnections(){
+        CONSUMER_POOL.forEach(MAIN_POOL::put);
+        CONSUMER_POOL.clear();
+    }
+
+    public record ConnectionWrapper(Integer id, Connection connection) {
     }
 }
