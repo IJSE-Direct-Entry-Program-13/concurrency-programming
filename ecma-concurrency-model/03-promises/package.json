@@ -1,0 +1,7 @@
+{
+  "name": "03-promises",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "nodemon app/demo1.js"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "04-rxjs-observables",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app/main.js"
+  },
+  "dependencies": {
+    "rxjs": "^7.8.2"
+  }
+}

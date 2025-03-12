@@ -1,0 +1,8 @@
+{
+  "name": "05-async-and-await",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app/demo3.js"
+  }
+}

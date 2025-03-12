@@ -1,0 +1,11 @@
+{
+  "name": "nodejs-back-end-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10"
+  }
+}

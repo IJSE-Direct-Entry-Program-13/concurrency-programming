@@ -1,0 +1,8 @@
+{
+  "name": "06-loops",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon app/async-generators.js"
+  }
+}
